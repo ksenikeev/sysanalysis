@@ -1,4 +1,4 @@
-package ru.itis.sa.tspserver.controller.rest;
+package ru.itis.sa.tspserver.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -6,6 +6,9 @@ import java.util.Date;
 public class TimeStampToken {
     private String ts;
     private String signature;
+
+    public TimeStampToken() {
+    }
 
     public TimeStampToken(String ts, String signature) {
         this.ts = ts;

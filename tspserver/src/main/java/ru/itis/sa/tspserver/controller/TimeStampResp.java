@@ -1,4 +1,4 @@
-package ru.itis.sa.tspserver.controller.rest;
+package ru.itis.sa.tspserver.controller;
 
 
 public class TimeStampResp {
@@ -16,6 +16,9 @@ public class TimeStampResp {
     private String statusString;
 
     private TimeStampToken timeStampToken;
+
+    public TimeStampResp() {
+    }
 
     public TimeStampResp(int status, String statusString, TimeStampToken timeStampToken) {
         this.status = status;
