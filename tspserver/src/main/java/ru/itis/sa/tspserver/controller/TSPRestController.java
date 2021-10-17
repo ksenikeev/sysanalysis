@@ -53,18 +53,13 @@ public class TSPRestController {
 
     @ResponseBody
     @RequestMapping(value = "/public")
-    public String getPublic(@RequestParam(name = "digest", required = false)String digestStr) {
+    public String getPublic() {
         return publikKeyStr;
     }
 
     @ResponseBody
     @RequestMapping("/")
-    public void index(HttpServletRequest request, HttpServletResponse response,
-                      @ModelAttribute("model") ModelMap model) {
-
-        String path = request.getContextPath();
-
-        model.addAttribute("app_path", path);
+    public void index(HttpServletResponse response) {
 
         try {
             OutputStream pw = (response.getOutputStream());
