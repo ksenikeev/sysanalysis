@@ -14,24 +14,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class NeuroRestController {
+
+    private static Logger log = Logger.getLogger(NeuroRestController.class.getName());
 
     @Autowired
     private SignService signService;
 
     @ResponseBody
-    @PostMapping(value = "/newblock")
-    public NewBlockResponse newBlockPostHandler(@RequestBody BlockModel block) {
-        NewBlockResponse resp = new NewBlockResponse(0,"",block);
-
-        return resp;
-    }
-
-    @ResponseBody
     @GetMapping(value = "/newblock")
     public NewBlockResponse  newBlockGetHandler(@RequestParam(name = "block") String blockStr) {
+
+        log.info("new block: " + blockStr);
 
         Date ts = new Date();
 
@@ -41,7 +39,7 @@ public class NeuroRestController {
         try {
             block = mapper.readValue(blockStr, BlockModel.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE,"error",e);
             return new NewBlockResponse(2,"mapper error: " + e.getMessage(),null);
         }
 
@@ -52,11 +50,12 @@ public class NeuroRestController {
             String prevHash = sz > 0 ? new String(Hex.encode(signService.getHash(BlockChain.chain.get(sz - 1)))) : null;
 
             if (!block.getPrevhash().equals(prevHash)) {
+                log.info("Hash error. Last block has hash: " + prevHash + "(" + block.getInfo() + ")");
                 return new NewBlockResponse(2, "Hash error. Last block has hash: " + prevHash, null);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE,"error",e);
             return new NewBlockResponse(2, "server error: " + e.getMessage(), null);
         }
 
@@ -64,11 +63,13 @@ public class NeuroRestController {
         try {
             block_e = Double.parseDouble(block.getData().getE());
         } catch (NumberFormatException e) {
+            log.log(Level.SEVERE,"error "+ "(" + block.getInfo() + ")",e);
             return new NewBlockResponse(2, "Не удалось определить ошибку ваших параметров нейросети на тестовых данных: " + e.getMessage(), null);
         }
 
         // если ошибка > 1, то такие параметры блока не принимаются
         if (block_e > 1.000001) {
+            log.info("e > 1 (" + block.getInfo() + ")");
             return new NewBlockResponse(2,"e > 1",null);
         }
 
@@ -78,12 +79,24 @@ public class NeuroRestController {
 
         //сравниваем ошибку блока и пересчитанную ошибку
         if (Math.abs(e - block_e) > 0.000001) {
-            return new NewBlockResponse(2, "разница с предъявленной ошибкой превышает 0.000001", null);
+            return new NewBlockResponse(2, "разница с предъявленной ошибкой превышает 0.000001 ( рассчитали " +block_e+" , " + block.getInfo() + ")", null);
         }
 
         block.setTs( new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SX").format(ts));
 
+        try {
+            byte[] hash = signService.getHash(block);
+            byte[] sign = signService.generateRSAPSSSignature( Hex.encode(hash));
+            String arbiterSignature = new String(Hex.encode(sign));
+            block.setArbitersignature(arbiterSignature);
+        } catch (Exception e1) {
+            log.log(Level.SEVERE,"error "+ "(" + block.getInfo() + ")",e1);
+            return new NewBlockResponse(2, "Ошибка формирования подписи арбитра: " + e1.getMessage(), null);
+        }
+
         BlockChain.chain.add(block);
+        BlockChain.saveBlockChain();
+        log.info("block " + block.getInfo() + " added ");
         NewBlockResponse resp =  new NewBlockResponse(0,"",block);
 
         return resp;
