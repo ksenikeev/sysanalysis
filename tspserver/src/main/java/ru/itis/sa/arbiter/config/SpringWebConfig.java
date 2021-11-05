@@ -19,7 +19,7 @@ public class SpringWebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/resources/");
     }
 
- /*   @Bean
+    @Bean
     public FreeMarkerViewResolver freemarkerViewResolver() {
         FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
         resolver.setCache(true);
@@ -39,4 +39,4 @@ public class SpringWebConfig implements WebMvcConfigurer {
         freeMarkerConfigurer.setDefaultEncoding("UTF-8");
         return freeMarkerConfigurer;
     }
-*/}
+}

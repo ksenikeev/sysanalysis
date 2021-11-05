@@ -3,17 +3,16 @@
 <html>
 <head>
 	<meta charset="utf-8"/>
-	<link rel='stylesheet' href='${model["app_path"]}/resources/css/main.css'>
-	<link rel='stylesheet' href='${model["app_path"]}/resources/css/menu.css'>
-	<script src='${model["app_path"]}/resources/js/hcont.js'></script>
 	<title>Блок чейн (владельцы блоков)</title>
 </head>
 <body>
 
 <table>
-	<th>Создан</th><th>Владелец</th>
-<#list ${model["chain"]} as block>
-	<td>block.ts</td><td>block.info</td>
+	<th></th><th>Создан</th><th>Владелец</th><th>ошибка</th><th>public key</th>
+<#list model["chain"] as block>
+	<tr>
+		<td>${block?counter}</td><td>${block.ts}</td><td>${block.info}</td><td>${block.data.e}</td><td>${block.data.publickey}</td>
+	</tr>
 </#list>
 </table>
 </body>
