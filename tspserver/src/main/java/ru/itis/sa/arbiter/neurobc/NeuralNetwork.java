@@ -63,7 +63,7 @@ public class NeuralNetwork {
     public double g(double x1, double x2) {
         double h11 = f(x1*w11 + x2*w21);
         double h12 = f( x1*w12 + x2*w22);
-        return f( f(h11*v11 + h12*v21)*w1 + f(h11*v12 + h12*v22)*w2 + f(h11*v13+h12*v23));
+        return f( f(h11*v11 + h12*v21)*w1 + f(h11*v12 + h12*v22)*w2 + f(h11*v13+h12*v23)*w3);
     }
 
     public double e() {

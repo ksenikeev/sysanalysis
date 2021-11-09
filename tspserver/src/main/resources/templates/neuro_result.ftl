@@ -11,7 +11,7 @@
 	<th></th><th>Создан</th><th>Владелец</th><th>ошибка</th><th>public key</th>
 <#list model["chain"] as block>
 	<tr>
-		<td>${block?counter}</td><td>${block.ts}</td><td>${block.info}</td><td>${block.data.e}</td><td>${block.data.publickey}</td>
+		<td>${block?counter}</td><td>${block.ts}</td><td>${block.info}</td><td>${block.data.e}</td>
 	</tr>
 </#list>
 </table>
