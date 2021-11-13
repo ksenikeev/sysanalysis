@@ -79,7 +79,7 @@ public class NeuroRestController {
 
         //сравниваем ошибку блока и пересчитанную ошибку
         if (Math.abs(e - block_e) > 0.000001) {
-            return new NewBlockResponse(2, "разница с предъявленной ошибкой превышает 0.000001 ( рассчитали " +block_e+" , " + block.getInfo() + ")", null);
+            return new NewBlockResponse(2, "расчитанная ошибка " + e + ", разница с предъявленной ошибкой превышает 0.000001 ( вы рассчитали " +block_e+" , " + block.getInfo() + ")", null);
         }
 
         block.setTs( new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SX").format(ts));
