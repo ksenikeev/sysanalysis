@@ -12,6 +12,7 @@
         <module>blockchain1</module>
         <module>tspserver</module>
         <module>neuroclient</module>
+        <module>gametheory</module>
     </modules>
 
 

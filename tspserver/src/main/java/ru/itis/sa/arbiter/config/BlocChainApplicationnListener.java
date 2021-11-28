@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import ru.itis.sa.arbiter.gametheory.CurrencyBlockChain;
+import ru.itis.sa.arbiter.gametheory.CurrencyBlockModel;
+import ru.itis.sa.arbiter.gametheory.CurrencyDataModel;
 import ru.itis.sa.arbiter.neurobc.BlockChain;
 import ru.itis.sa.arbiter.neurobc.BlockModel;
 import ru.itis.sa.arbiter.neurobc.DataModel;
@@ -61,5 +64,26 @@ public class BlocChainApplicationnListener implements ApplicationListener<Applic
 
             BlockChain.saveBlockChain();
         }
+
+        CurrencyBlockChain.readBlockChain();
+
+        if (CurrencyBlockChain.chain.size() == 0) {
+
+            log.info("blockchain size = 0");
+
+            CurrencyDataModel dm = new
+                    CurrencyDataModel("Еникеев Камиль Шамилевич,-","CHF","SGD","NOK","HUF","s3");
+            CurrencyBlockModel block = new CurrencyBlockModel();
+            block.setData(dm);
+            try {
+                block.setTs(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SX").format(new Date()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            CurrencyBlockChain.chain.add(block);
+
+            CurrencyBlockChain.saveBlockChain();
+        }
+
     }
 }
