@@ -15,7 +15,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 public class SpringWebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/practic0/resources/**")
+        registry.addResourceHandler("/resources/**")
                 .addResourceLocations("classpath:/resources/");
     }
 
