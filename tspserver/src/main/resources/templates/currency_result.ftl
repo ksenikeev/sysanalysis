@@ -4,6 +4,18 @@
 <head>
 	<meta charset="utf-8"/>
 	<title>Блок чейн (владельцы блоков)</title>
+
+	<style type="text/css">
+	.stnorm {}
+	.strisk {
+		font-weight: bold;
+		color: #FF0000;
+	}
+	.stsel {
+		background-color: rgb(255, 255, 128);
+	}
+	</style>
+
 </head>
 <body>
 
@@ -16,14 +28,20 @@
 
 <table>
 	<th></th><th>Создан</th><th>Владелец</th><th>Валюта 1</th><th>Валюта 2</th><th>Валюта 3</th><th>Валюта 4</th><th>Стратегия</th>
-<#list model["chain"] as block>
+	<th>страт. 1</th><th>страт. 2</th><th>страт. 3</th><th>страт. 4</th><th>Итог</th>
+	<#list model["chain"] as block>
 	<tr>
-		<td>${block?counter}</td><td>${block.ts}</td><td>${block.data.name}</td>
-		<td>${block.data.currency1}</td>
-		<td>${block.data.currency2}</td>
-		<td>${block.data.currency3}</td>
-		<td>${block.data.currency4}</td>
-		<td>${block.data.strategy!}</td>
+		<td>${block?counter}</td><td>${block.ts}</td><td>${block.name}</td>
+		<td>${block.currency1}</td>
+		<td>${block.currency2}</td>
+		<td>${block.currency3}</td>
+		<td>${block.currency4}</td>
+		<td>${block.strategy!}</td>
+		<td>${block.strategy1}</td>
+		<td>${block.strategy2}</td>
+		<td>${block.strategy3}</td>
+		<td>${block.strategy4}</td>
+		<td>${block.itog}</td>
 	</tr>
 </#list>
 </table>
@@ -37,14 +55,20 @@
 
 <table>
 	<th></th><th>Создан</th><th>Владелец</th><th>Валюта 1</th><th>Валюта 2</th><th>Валюта 3</th><th>Валюта 4</th><th>Стратегия</th>
+	<th>страт. 1</th><th>страт. 2</th><th>страт. 3</th><th>страт. 4</th><th>Итог</th>
 	<#list model["chain2"] as block>
 	<tr>
-		<td>${block?counter}</td><td>${block.ts}</td><td>${block.data.name}</td>
-		<td>${block.data.currency1}</td>
-		<td>${block.data.currency2}</td>
-		<td>${block.data.currency3}</td>
-		<td>${block.data.currency4}</td>
-		<td>${block.data.strategy!}</td>
+		<td>${block?counter}</td><td>${block.ts}</td><td>${block.name}</td>
+		<td>${block.currency1}</td>
+		<td>${block.currency2}</td>
+		<td>${block.currency3}</td>
+		<td>${block.currency4}</td>
+		<td>${block.strategy!}</td>
+		<td>${block.strategy1}</td>
+		<td>${block.strategy2}</td>
+		<td>${block.strategy3}</td>
+		<td>${block.strategy4}</td>
+		<td>${block.itog}</td>
 	</tr>
 </#list>
 </table>

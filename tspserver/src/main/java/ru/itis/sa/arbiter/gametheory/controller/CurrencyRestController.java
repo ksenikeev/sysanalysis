@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.itis.sa.arbiter.gametheory.*;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,9 +20,14 @@ import java.util.logging.Logger;
 public class CurrencyRestController {
 
     private static Logger log = Logger.getLogger(CurrencyRestController.class.getName());
+    // пропорции валют в стратегиях
+    private static double[][] strategy1 = new double[][]{{0.1,0.15,0.15,0.6}, {0.3,0.3,0.3,0.1},{0.6,0.1,0.1,0.2},{0.35,0.35,0.15,0.15}};
+    private static double[][] strategy2 = new double[][]{{0.2,0.15,0.25,0.4}, {0.3,0.25,0.15,0.3},{0.5,0.15,0.25,0.1},{0.35,0.25,0.2,0.2}};
 
     @Autowired
     private HashService hashService;
+
+    private CurrencyHandler handler = new CurrencyHandler();
 
     // http://localhost:8080/currency/add?value=%7B%22name%22:%22Еникеев%20Камиль%20Шамилевич,-%22,%22currency1%22:%22AUD%22,%22strategy%22:%22s3%22%7D
     @ResponseBody
@@ -49,15 +55,15 @@ public class CurrencyRestController {
         }
 
         if (block.getData().getCurrency1().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код авлюты 1",null);
+            return new CurrencyBlockResponse(2,"Не указан код валюты 1",null);
         }
 
         if (block.getData().getCurrency2().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код авлюты 2",null);
+            return new CurrencyBlockResponse(2,"Не указан код валюты 2",null);
         }
 
         if (block.getData().getCurrency3().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код авлюты 3",null);
+            return new CurrencyBlockResponse(2,"Не указан код валюты 3",null);
         }
 
         int sz = CurrencyBlockChain.chain.size();
@@ -70,15 +76,15 @@ public class CurrencyRestController {
                 block.setPrevhash(new String(Hex.encode(hash)));
             } catch (Exception e1) {
                 log.log(Level.SEVERE, "error " + "(" + block.getInfo() + ")", e1);
-                return new CurrencyBlockResponse(2, "Ошибка формирования подписи арбитра: " + e1.getMessage(), null);
+                return new CurrencyBlockResponse(2, "Ошибка формирования хеша: " + e1.getMessage(), null);
             }
 
-            for (CurrencyBlockModel bm : CurrencyBlockChain.chain) {
+ /*           for (CurrencyBlockModel bm : CurrencyBlockChain.chain) {
                 if (checkEquals(bm, block)) {
                     return new CurrencyBlockResponse(2, "Такой набор валют уже загружался", null);
                 }
             }
-        }
+*/        }
 
         CurrencyBlockChain.chain.add(block);
         CurrencyBlockChain.saveBlockChain();
@@ -113,15 +119,15 @@ public class CurrencyRestController {
         }
 
         if (block.getData().getCurrency1().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код авлюты 1",null);
+            return new CurrencyBlockResponse(2,"Не указан код валюты 1",null);
         }
 
         if (block.getData().getCurrency2().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код авлюты 2",null);
+            return new CurrencyBlockResponse(2,"Не указан код валюты 2",null);
         }
 
         if (block.getData().getCurrency3().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код авлюты 3",null);
+            return new CurrencyBlockResponse(2,"Не указан код валюты 3",null);
         }
 
 
@@ -135,14 +141,16 @@ public class CurrencyRestController {
                 block.setPrevhash(new String(Hex.encode(hash)));
             } catch (Exception e1) {
                 log.log(Level.SEVERE, "error " + "(" + block.getInfo() + ")", e1);
-                return new CurrencyBlockResponse(2, "Ошибка формирования подписи арбитра: " + e1.getMessage(), null);
+                return new CurrencyBlockResponse(2, "Ошибка формирования хеша: " + e1.getMessage(), null);
             }
 
+/*
             for (CurrencyBlockModel bm : CurrencyBlockChain.chain2) {
                 if (checkEquals(bm, block)) {
                     return new CurrencyBlockResponse(2, "Такой набор валют уже загружался", null);
                 }
             }
+*/
         }
 
         CurrencyBlockChain.chain2.add(block);
@@ -180,10 +188,25 @@ public class CurrencyRestController {
     public String getAllData(HttpServletRequest request,
                              @ModelAttribute("model") ModelMap model) {
 
-        model.addAttribute("chain", CurrencyBlockChain.chain);
-        model.addAttribute("chain2", CurrencyBlockChain.chain2);
+        model.addAttribute("chain", handler.getUIDataModelList(CurrencyBlockChain.chain, strategy1));
+        model.addAttribute("chain2", handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy2));
 
         return "currency_result";
+    }
+
+    @GetMapping(value = "/currency/sortedresult")
+    public String getSortwdResult(HttpServletRequest request,
+                             @ModelAttribute("model") ModelMap model) {
+
+        List<UIDataModel>  c1 = handler.getUIDataModelList(CurrencyBlockChain.chain, strategy1);
+        List<UIDataModel>  c2 = handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy2);
+
+        c1.addAll(c2);
+        c1.sort((o1, o2) -> o1.getItogd() < o2.getItogd() ? 1 : -1);
+
+        model.addAttribute("chain", c1);
+
+        return "currency_sorted_result";
     }
 
     private boolean checkEquals(CurrencyBlockModel block1, CurrencyBlockModel block2) {

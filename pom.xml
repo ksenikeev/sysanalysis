@@ -7,12 +7,13 @@
     <groupId>ru.itis</groupId>
     <artifactId>sysanalysis</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <modules>
         <module>blockchain1</module>
         <module>tspserver</module>
         <module>neuroclient</module>
         <module>gametheory</module>
+        <module>practic0</module>
     </modules>
 
 

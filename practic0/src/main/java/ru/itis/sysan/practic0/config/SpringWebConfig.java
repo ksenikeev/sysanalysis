@@ -1,4 +1,4 @@
-package ru.itis.sa.arbiter.config;
+package ru.itis.sysan.practic0.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,7 +15,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 public class SpringWebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**")
+        registry.addResourceHandler("/practic0/resources/**")
                 .addResourceLocations("classpath:/resources/");
     }
 
