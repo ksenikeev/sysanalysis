@@ -14,4 +14,5 @@ public class DataModel {
     private String objects = "";
     private String morphism = "";
     private String composition = "";
+    private String id = "";
 }

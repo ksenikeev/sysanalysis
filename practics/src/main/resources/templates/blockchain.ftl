@@ -14,14 +14,14 @@
             text-align: center;
         }
     </style>
+
+        <h2 align="center">Данные блок-чейна</h2>
+
+        <div align="center">
+
 </head>
-<body>
-
-<h2 align="center">Данные блок-чейна</h2>
-
-<div align="center">
-<table  >
-    <th></th><th>Создан</th><th>Владелец</th><th>Группа</th><th>Объекты</th><th>Морфизмы</th><th>Композиции</th>
+<body><table>
+    <th></th><th>Создан</th><th>Владелец</th><th>Группа</th><th>Объекты</th><th>Морфизмы</th><th>Композиции</th><th>id</th>
     <#list model["chain"] as block>
     <tr>
         <td>${block?counter}</td>
@@ -31,6 +31,7 @@
         <td>${block.objects}</td>
         <td>${block.morphism}</td>
         <td>${block.composition}</td>
+        <td>${block.id}</td>
     </tr>
 </#list>
 </table>

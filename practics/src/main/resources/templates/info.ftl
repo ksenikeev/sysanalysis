@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Анализ данных. Тест</title>
+    <title>Теория категорий. Нулевое практическое занятие по дисциплине ТСиСА</title>
     <meta charset="utf-8"/>
     <style>
         body {
@@ -35,21 +35,24 @@
 
 
 <div class="task">
-    При выполнении задания ван необходимо зафиксировать свой выбор в блок-чейне. Сделать это можно:
+    Блок можно создать следующим образом:
 </div>
 
 <ol>
     <li>
-        Для выбора правила отбора отправить GET запрос на http://194.67.67.199/dataanalysis с параметром rule<br>
-        Пример: http://194.67.67.199/dataanalysis?rule={"name":"LastName FirstName", "group":"group number","rule":"Исключаются все лица старше 35 лет"}
+        Для выбора правила отбора отправить GET запрос на http://194.67.67.199/sa с параметром rule<br>
+        Пример из области математики или программирования: http://194.67.67.199/dataanalysis?rule={"name":"LastName FirstName",
+        "group":"group number","objects":"Множество квадратных матриц n-ого порядка",
+        "morphisms":"Множество квадратных матриц n-ого порядка таких, что f:A->B, f=A-B, где А и B - объекты",
+        "composition":"если f:A->B, g:B->C, то f*g:A->C, f*g=A-C", "id":"нулевая матрица n-ого порядка"}
     </li>
     <li>
-        Для выбора региона отправить GET запрос на http://194.67.67.199/dataanalysis с параметром region<br>
-        Пример: http://194.67.67.199/dataanalysis?region={"name":"LastName FirstName", "group":"group number","region":"Татарстан"}
-    </li>
-    <li>
-        Используя интерфейс сайта.
-    </li>
+        Пример из произвольной области:
+        {"name":"LastName FirstName",
+        "group":"group number","objects":"Множество населённых пунктов",
+        "morphisms":"дороги",
+        "composition":"если f:A->B, g:B->C, то f*g:A->C, f*g= дорога из А в С через B", "id":"остаться в исходном населённом пункте"}
+
 </ol>
 
 <div class="wo">
@@ -64,15 +67,14 @@
 <code>
     import urllib.request<br>
     import urllib.parse<br>
-    data=urllib.parse.quote('{"name":"LastName FirstName", "group":"group number","rule":"Исключаются все лица старше 35 лет"}')<br>
-    resp = urllib.request.urlopen("http://194.67.67.199/dataanalysis?rule=" + data).read()<br>
+    data=urllib.parse.quote('{"name":"LastName FirstName", "group":"group number",
+    "objects":"", "morphism":"", "composition":"", "id":""}')<br>
+    resp = urllib.request.urlopen("http://89.108.115.118/sa/practic0/addsolution?solution=" + data).read()<br>
     print(resp)<br>
 </code>
 </div>
 
-<div class="task">
-    <a href="/resources/example0-1.xlsx">Файл с данными</a>
-</div>
+
 
 <table align="center" >
     <tr>
