@@ -79,20 +79,20 @@
 <table align="center" >
     <tr>
         <td>
-            <a href="/practic0/">
-            <img src="/practic0/resources/img/homepage_home_house_icon_225739.svg" width="128"
+            <a href="/sa/">
+            <img src="/sa/resources/img/homepage_home_house_icon_225739.svg" width="128"
                  height="128" alt="Главная">
             </a>
         </td>
         <td>
-            <a href="/practic0/blockchain">
-                <img src="/practic0/resources/img/archive_document_cloud_data_folder_backup_website_browser_ui_icon_219918.svg"
+            <a href="/sa/blockchain">
+                <img src="/sa/resources/img/archive_document_cloud_data_folder_backup_website_browser_ui_icon_219918.svg"
                      width="128" height="128" alt="Блок-чейн">
             </a>
         </td>
         <td>
-            <a href="/practic0/task">
-                <img src="/practic0/resources/img/data_page_sheet_file_type_format_folder_document_ui_icon_219962.svg"
+            <a href="/sa/task">
+                <img src="/sa/resources/img/data_page_sheet_file_type_format_folder_document_ui_icon_219962.svg"
                      width="128" height="128" alt="Задания">
             </a>
         </td>

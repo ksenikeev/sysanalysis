@@ -56,14 +56,14 @@
 <table align="center" >
     <tr>
         <td>
-            <a href="/practic0/">
-            <img src="/practic0/resources/img/homepage_home_house_icon_225739.svg" width="128"
+            <a href="/sa/">
+            <img src="/sa/resources/img/homepage_home_house_icon_225739.svg" width="128"
                  height="128" alt="Главная">
             </a>
         </td>
         <td>
-            <a href="/practic0/blockchain">
-                <img src="/practic0/resources/img/archive_document_cloud_data_folder_backup_website_browser_ui_icon_219918.svg"
+            <a href="/sa/blockchain">
+                <img src="/sa/resources/img/archive_document_cloud_data_folder_backup_website_browser_ui_icon_219918.svg"
                      width="128" height="128" alt="Блок-чейн">
             </a>
         </td>
@@ -72,8 +72,8 @@
                  width="128" height="128" alt="Отправить данные"></td>
 -->
         <td>
-            <a href="/practic0/info">
-                <img src="/practic0/resources/img/direction_navigation_gps_pin_location_essential_map_android_ui_icon_219936.svg"
+            <a href="/sa/info">
+                <img src="/sa/resources/img/direction_navigation_gps_pin_location_essential_map_android_ui_icon_219936.svg"
                      width="128" height="128" alt="Информация">
             </a>
         </td>
