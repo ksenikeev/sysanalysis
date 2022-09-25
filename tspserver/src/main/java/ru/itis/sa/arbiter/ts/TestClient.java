@@ -24,7 +24,7 @@ public class TestClient {
     /* алгоритм ключа сервиса */
     public static final String KEY_ALGORITHM = "RSA";
     /* алгоритм подписи, формируемой сервисом */
-    public static final String SIGN_ALGORITHM = "SHA256withRS";
+    public static final String SIGN_ALGORITHM = "SHA256withRSA";
 
 
     public static void main(String[] args) {
