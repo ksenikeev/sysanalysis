@@ -21,17 +21,13 @@ public class Utils {
 
     public static byte[] getHash(BlockInfo blockInfo) throws NoSuchAlgorithmException, UnsupportedEncodingException, NoSuchProviderException {
 
-        String info = "";
-        for (String s : blockInfo.getData()) {
-            info = info + s;
-        }
 
         MessageDigest digest = MessageDigest.getInstance(DIGEST_ALGORITHM,"BC");
 
         //System.out.println(digest.getProvider());
 
         byte[] result = digest.digest(
-                concat(blockInfo.getPrevHash(),info.getBytes("UTF-8")));
+                concat(blockInfo.getPrevHash(),blockInfo.getData().getBytes("UTF-8")));
         return result;
     }
 

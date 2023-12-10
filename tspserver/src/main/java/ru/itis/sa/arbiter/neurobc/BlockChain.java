@@ -20,7 +20,7 @@ public class BlockChain {
 
     public static final List<BlockModel> chain = new ArrayList<>();
 
-    public static final String FILE_NAME_CHAIN = System.getProperty("user.home") + File.separator + "block_chain.json";
+    public static final String FILE_NAME_CHAIN = "n_block_chain.json";
 
     public static void readBlockChain() {
         File file = new File(FILE_NAME_CHAIN);

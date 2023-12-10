@@ -43,8 +43,7 @@ public class SignedBlockChain {
 
         for (int i = 0;i < BC_LENGTH; i++) {
             BlockInfo blockInfo = new BlockInfo(i);
-            blockInfo.getData().add("{\"data\":\"data " + i + "\"}");
-            blockInfo.getData().add("{\"timestamp\":\"" + new Date() + "\"}");
+            blockInfo.setData("Данные блока " + i);
             blockInfo.setPrevHash(prevHash);
 
             try {
@@ -65,7 +64,7 @@ public class SignedBlockChain {
             BlockInfo bi = blockchain.get(i);
             System.out.println("===================== " + bi.getBlockNum() + " =============================");
             System.out.println("prev hash: " + (bi.getPrevHash() != null ? new String(Hex.encode(bi.getPrevHash())): ""));
-            for (String s: bi.getData()) System.out.println(s);
+            System.out.println(bi.getData());
             System.out.println("digest: " + new String(Hex.encode(Utils.getHash(bi))));
             System.out.println("signature: " + new String(Hex.encode(bi.getSign())));
             System.out.println();
@@ -91,7 +90,6 @@ public class SignedBlockChain {
     }
 
     private static void damage() {
-        blockchain.get(3).getData().remove(0);
-        blockchain.get(3).getData().add(0,"{\"data\":\"damaged data\"}");
+        blockchain.get(3).setData("{\"data\":\"damaged data\"}");
     }
 }

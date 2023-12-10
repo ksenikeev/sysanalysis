@@ -3,14 +3,12 @@ package ru.itis.sa.arbiter.gametheory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CurrencyHandler {
 
-    public static String[] currency = {"AUD","CAD","EUR","USD","SGD","JPY","DKK","CHF","GBP","NOK","NZD","HKD","CNY","HUF"}; //,"BYR"
+    public static String[] currency = {"AUD", "CAD", "EUR", "USD", "SGD", "JPY", "DKK", "CHF", "GBP", "NOK", "CNY",
+                                                      "HUF","TRY", "INR", "IDR"};
     // пропорции валют в стратегиях
     double[][] strategy1 = new double[][]{{0.1,0.15,0.15,0.6}, {0.3,0.3,0.3,0.1},{0.6,0.1,0.1,0.2},{0.35,0.35,0.15,0.15}};
     double[][] strategy2 = new double[][]{{0.2,0.15,0.25,0.4}, {0.3,0.25,0.15,0.3},{0.5,0.15,0.25,0.1},{0.35,0.25,0.2,0.2}};
@@ -22,14 +20,16 @@ public class CurrencyHandler {
     }
 
     public static void readData() {
+        System.out.println("read data");
         for (String cur : currency) {
             try {
-                List<String> pair = Files.readAllLines(Paths.get("itog_pair/" + cur + "RUB.csv"));
+                List<String> pair = Files.readAllLines(Paths.get("itog_pair/" + cur + "RUB_220701_221113.csv"));
+
                 Double[][] m = new Double[5][2];
-                for (int i = 1; i < 6; i++) {
+                for (int i = 111; i < 116; i++) {
                     String[] sc = pair.get(i).split(";");
-                    m[i-1][0] = Double.parseDouble(sc[2]);
-                    m[i-1][1] = Double.parseDouble(sc[3]);
+                    m[i - 111][0] = Double.parseDouble(sc[4]);
+                    m[i - 111][1] = Double.parseDouble(sc[7]);
                 }
                 currecnyData.put(cur, m);
             } catch (IOException e) {
@@ -44,6 +44,7 @@ public class CurrencyHandler {
         for (CurrencyBlockModel block : chain) {
             UIDataModel dm = new UIDataModel(block);
             res.add(dm);
+            // Блоки с пустыми валютами игнорируем
             if (isEmpty(block.getData().getCurrency1()) ||
                     isEmpty(block.getData().getCurrency2()) ||
                     isEmpty(block.getData().getCurrency3()) ||
@@ -55,16 +56,24 @@ public class CurrencyHandler {
             String currency3 = block.getData().getCurrency3().trim().toUpperCase();
             String currency4 = block.getData().getCurrency4().trim().toUpperCase();
 
+            // Блоки с валютами, не представлееными в списке игнорируем
             if (!isValidCurrency(currency1) || !isValidCurrency(currency2) || !isValidCurrency(currency3) ||
                     !isValidCurrency(currency4)) continue;
 
-            int selectedStrategy = -1;
-            try {
-                selectedStrategy = Integer.parseInt(block.getData().getStrategy().trim().replace(" ","").substring(1,2));
-            } catch (Exception e) {}
+            int selectedStrategy = 0;
 
-            if (selectedStrategy == -1) continue;
-            if (selectedStrategy == 0) selectedStrategy = 1;
+            String str = block.getData().getStrategy().trim().replace(" ","");
+            System.out.println("стратегия " + str);
+
+            if (!isEmpty(str)) {
+                switch (str.toUpperCase()) {
+                    case "S1" : case "1" : selectedStrategy = 1; break;
+                    case "S2" : case "2" : selectedStrategy = 2; break;
+                    case "S3" : case "3" : selectedStrategy = 3; break;
+                    case "S4" : case "4" : selectedStrategy = 4; break;
+                    default: continue; // не определенные стратегии игнорируем
+                }
+            }
 
             Double[][]m1 = currecnyData.get(currency1);
             Double[][]m2 = currecnyData.get(currency2);
@@ -84,7 +93,8 @@ public class CurrencyHandler {
                                 strategy[k][2]*((1/m3[0][0])*m3[4][1] - 1) +
                                 strategy[k][3]*((1/m4[0][0])*m4[4][1] - 1)
                 );
-                // для каждой стратегии сформируем массив взвешенных котировок по дням
+                // для каждой стратегии сформируем массив взвешенных котировок (закрытия) по дням
+                // для выявления наиболее рискованной
                 double x_ = 0;
                 double d = 0;
                 for (int j = 0; j < 5; j++) {
@@ -100,11 +110,11 @@ public class CurrencyHandler {
                 if (d > riskD) { riskD = d; riskStrategy = k+1;}
             }
 
-
             dm.setStrategy1(String.format("<span class='%s %s'>%.2f</span>",riskStrategy==1 ? "strisk":"stnorm",selectedStrategy==1 ? "stsel":"",profit[0]));
             dm.setStrategy2(String.format("<span class='%s %s'>%.2f</span>",riskStrategy==2 ? "strisk":"stnorm",selectedStrategy==2 ? "stsel":"",profit[1]));
             dm.setStrategy3(String.format("<span class='%s %s'>%.2f</span>",riskStrategy==3 ? "strisk":"stnorm",selectedStrategy==3 ? "stsel":"",profit[2]));
             dm.setStrategy4(String.format("<span class='%s %s'>%.2f</span>",riskStrategy==4 ? "strisk":"stnorm",selectedStrategy==4 ? "stsel":"",profit[3]));
+
             if (selectedStrategy > 0 && selectedStrategy < 5) {
                 dm.setItog(String.format("<span class='%s'>%.2f</span>", riskStrategy == selectedStrategy ? "strisk" : "stnorm", profit[selectedStrategy - 1]));
                 dm.setItogd(profit[selectedStrategy - 1]);
@@ -138,9 +148,7 @@ public class CurrencyHandler {
 
         CurrencyHandler handler = new CurrencyHandler();
         List<UIDataModel> lst = handler.getUIDataModelList(CurrencyBlockChain.chain, handler.strategy1);
-        lst.forEach(dm -> {
-            System.out.println(dm);
-        });
+        lst.forEach(System.out::println);
     }
 
     private boolean isEmpty(String s) {

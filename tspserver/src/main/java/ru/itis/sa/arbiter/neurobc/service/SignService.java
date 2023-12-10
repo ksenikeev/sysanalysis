@@ -22,33 +22,48 @@ public class SignService {
 
     public byte[] getHash(BlockModel block) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
-        MessageDigest digest = MessageDigest.getInstance(DIGEST_ALGORITHM);
+        MessageDigest messageDigest = MessageDigest.getInstance(DIGEST_ALGORITHM);
 
-        byte[] result = digest.digest(
-                concat(concat(block.getPrevhash() != null? block.getPrevhash().getBytes() : null,
-                        block.getData().toString().getBytes("UTF-8")),
-                        block.getTs().getBytes()));
-        return result;
+        // вычисляем хеш от соединения (предыдущий хеш + данные + подпись данных + nonce)
+        byte[] hash = messageDigest.digest(
+                concat(
+                        block.getPrevhash() != null ? Hex.decode(block.getPrevhash()) : null,
+                                    block.getData().toString().getBytes("UTF-8"),
+                        Hex.decode(block.getSignature()), intToByteArray(block.getNonce())));
+        return hash;
     }
 
-    public static byte[] concat(byte[] a, byte[] b) {
-        if (a == null) return b;
-        if (b == null) return a;
-        int len_a = a.length;
-        int len_b = b.length;
-        byte[] C = new byte[len_a + len_b];
-        System.arraycopy(a, 0, C, 0, len_a);
-        System.arraycopy(b, 0, C, len_a, len_b);
-        return C;
+    public static byte[] concat(byte[] ... a) {
+        int length = 0;
+        for (int i = 0; i < a.length; ++i) {
+            if (a[i] != null)
+                length += a[i].length;
+        }
+
+        byte[] c = new byte[length];
+        int position = 0;
+        for (int i = 0; i < a.length; ++i) {
+            if (a[i] != null) {
+                System.arraycopy(a[i], 0, c, position, a[i].length);
+                position += a[i].length;
+            }
+        }
+        return c;
+    }
+
+    public static byte[] intToByteArray(int x) {
+        byte[] r = new byte[4];
+        r[0] = (byte) (x >> 24);
+        r[1] = (byte) (x >> 16);
+        r[2] = (byte) (x >> 8);
+        r[3] = (byte) (x);
+        return r;
     }
 
     public static KeyPair loadKeys() throws Exception {
 
-        byte[] publicKeyHex = publicKey16.getBytes();
-        byte[] privateKeyHex = privateKey16.getBytes();
-
-        PublicKey publicKey = convertArrayToPublicKey(Hex.decode(publicKeyHex),KEY_ALGORITHM);
-        PrivateKey privateKey = convertArrayToPrivateKey(Hex.decode(privateKeyHex),KEY_ALGORITHM);
+        PublicKey publicKey = convertArrayToPublicKey(Hex.decode(publicKey16),KEY_ALGORITHM);
+        PrivateKey privateKey = convertArrayToPrivateKey(Hex.decode(privateKey16),KEY_ALGORITHM);
 
         KeyPair keyPair = new KeyPair(publicKey, privateKey);
         return keyPair;
@@ -58,7 +73,6 @@ public class SignService {
         X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(encoded);
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
         PublicKey pubKey = keyFactory.generatePublic(pubKeySpec);
-
         return pubKey;
     }
 
@@ -100,6 +114,16 @@ public class SignService {
         signature.update(input);
 
         return signature.verify(encSignature);
+    }
+
+    public static boolean verifyRSAPSSSignature(String publicKey, String input, String encSignature)
+            throws Exception {
+        Signature signature = Signature.getInstance(SIGN_ALGORITHM);
+
+        signature.initVerify(convertArrayToPublicKey(Hex.decode(publicKey), KEY_ALGORITHM));
+        signature.update(input.getBytes("UTF-8"));
+
+        return signature.verify(Hex.decode(encSignature));
     }
 
 }

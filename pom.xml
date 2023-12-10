@@ -14,6 +14,7 @@
         <module>neuroclient</module>
         <module>gametheory</module>
         <module>practics</module>
+        <module>modeling</module>
     </modules>
 
 

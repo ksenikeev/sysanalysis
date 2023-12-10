@@ -7,7 +7,7 @@ public class BlockInfo {
 
     private int blockNum;
 
-    private List<String> data = new ArrayList<>();
+    private String data;
 
     private byte[] prevHash;
 
@@ -27,11 +27,11 @@ public class BlockInfo {
         this.blockNum = blockNum;
     }
 
-    public List<String> getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(List<String> data) {
+    public void setData(String data) {
         this.data = data;
     }
 

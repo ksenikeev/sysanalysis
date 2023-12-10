@@ -22,7 +22,7 @@ public class CurrencyRestController {
     private static Logger log = Logger.getLogger(CurrencyRestController.class.getName());
     // пропорции валют в стратегиях
     private static double[][] strategy1 = new double[][]{{0.1,0.15,0.15,0.6}, {0.3,0.3,0.3,0.1},{0.6,0.1,0.1,0.2},{0.35,0.35,0.15,0.15}};
-    private static double[][] strategy2 = new double[][]{{0.2,0.15,0.25,0.4}, {0.3,0.25,0.15,0.3},{0.5,0.15,0.25,0.1},{0.35,0.25,0.2,0.2}};
+    //private static double[][] strategy2 = new double[][]{{0.2,0.15,0.25,0.4}, {0.3,0.25,0.15,0.3},{0.5,0.15,0.25,0.1},{0.35,0.25,0.2,0.2}};
 
     @Autowired
     private HashService hashService;
@@ -31,10 +31,10 @@ public class CurrencyRestController {
 
     // http://localhost:8080/currency/add?value=%7B%22name%22:%22Еникеев%20Камиль%20Шамилевич,-%22,%22currency1%22:%22AUD%22,%22strategy%22:%22s3%22%7D
     @ResponseBody
-    @GetMapping(value = "/currency/add")
+    @RequestMapping(path = {"/currency/add","/currency"})
     public CurrencyBlockResponse newBlockGetHandler(@RequestParam(name = "value") String dataStr) {
 
-        log.info("new block: " + dataStr);
+        log.info("new currency block: " + dataStr);
 
         Date ts = new Date();
         CurrencyBlockModel block = new CurrencyBlockModel();
@@ -164,21 +164,21 @@ public class CurrencyRestController {
     /**
      * Запрос цепочки блоков
      */
-    @ResponseBody
     @GetMapping(value = "/currency/bc")
-    public List<CurrencyBlockModel> getBc(@RequestParam(name = "hash", required = false) String prevHash) {
-
-        return CurrencyBlockChain.chain;
+    public String getBc(@RequestParam(name = "hash", required = false) String prevHash,
+                                          @ModelAttribute("model") ModelMap model) {
+        model.addAttribute("chain", CurrencyBlockChain.chain);
+        return "authors";
     }
 
     /**
      * Запрос цепочки блоков
      */
-    @ResponseBody
     @GetMapping(value = "/currency/bc2")
-    public List<CurrencyBlockModel> getBc2(@RequestParam(name = "hash", required = false) String prevHash) {
-
-        return CurrencyBlockChain.chain2;
+    public String getBc2(@RequestParam(name = "hash", required = false) String prevHash,
+                        @ModelAttribute("model") ModelMap model) {
+        model.addAttribute("chain", CurrencyBlockChain.chain2);
+        return "authors";
     }
 
     /**
@@ -189,7 +189,7 @@ public class CurrencyRestController {
                              @ModelAttribute("model") ModelMap model) {
 
         model.addAttribute("chain", handler.getUIDataModelList(CurrencyBlockChain.chain, strategy1));
-        model.addAttribute("chain2", handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy2));
+        model.addAttribute("chain2", handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy1));
 
         return "currency_result";
     }
@@ -199,7 +199,7 @@ public class CurrencyRestController {
                              @ModelAttribute("model") ModelMap model) {
 
         List<UIDataModel>  c1 = handler.getUIDataModelList(CurrencyBlockChain.chain, strategy1);
-        List<UIDataModel>  c2 = handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy2);
+        List<UIDataModel>  c2 = handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy1);
 
         c1.addAll(c2);
         c1.sort((o1, o2) -> o1.getItogd() < o2.getItogd() ? 1 : -1);

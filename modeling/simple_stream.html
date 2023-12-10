@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple stream</title>
+
+    <style>
+        canvas {
+            background-color: #afafaf;
+            height: 100px;
+            display: block;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+<!--             width: 100vw; -->
+
+</head>
+<body>
+
+<h1>Расчет простого потока</h1>
+<div>
+    <button onclick="start();">Запустить</button>
+    <button onclick="stop();">Остановить</button>
+
+</div>
+<br>
+
+<canvas id="road"></canvas>
+
+<script type="text/javascript">
+    let dt = 0.5; // 0.5 (сек)
+    let agents = []; // array of agents:  {V,a,x,t}
+
+    let T_global = 0; //
+
+    let V_max = 70 * 5 / 18; // 70 (км/ч)
+    let K_opt = 0.5; // (1/ 1000ч)
+    let D_opt = K_opt * V_max * 18 / 5; // (м)  необходимо пересчитывать для каждого автомобиля исходя из его скорости
+    let D_min = 4; // (м)
+    let a_start = 2.78; // (м/с^2)
+    let a_stop = - 8; // (м/с^2)
+    let a_ex_stop = - 10; // (м/с^2)
+    let L_auto = 4.2; // (м)
+
+    let V_skop = 10 * 5 / 18; // (км/ч)
+
+    let N = 2000; // 500 (автомобилей/ч) интенсивность потока
+
+    let L = 5000; // 5 км
+
+    let timerId = null;
+    let streamID = null;
+
+    let cnt_ = .0;
+
+    // Параметры рисования
+    let canvas = document.getElementById("road");
+    let ctx = canvas.getContext('2d');
+    console.log(canvas.width=document.documentElement.clientWidth);
+
+    // дистанция до предыдущего агента с учетом его длины в метрах
+    function distance(i) {
+        if (i > 0) {
+            return agents[i-1].x - L_auto - agents[i].x;
+        } else {
+            return 1000;
+        }
+    }
+
+    function calculate_step() {
+        let t_start = new Date().getTime();
+        for (let i = 0; i < agents.length; i++) {
+
+
+            // Реализация алгоритма
+            agents[i].t = agents[i].t + dt;
+
+            // анализируем скорость
+            if (agents[i].V >= 0) {
+                // подсчитаем изменившуюся за время delta t скорость
+                let v = agents[i].V + agents[i].a * dt;
+                if (v > 0) {
+                    agents[i].x = agents[i].x + agents[i].V * dt + agents[i].a * dt * dt / 2;
+                    agents[i].V = agents[i].V + agents[i].a * dt ;
+
+                    // В зависимости от скорости определим оптимальную дистанцию до следующего автомобиля
+                    D_opt = K_opt * agents[i].V * 18 / 5;
+                    if (D_opt < D_min) D_opt = D_min;
+                } else {
+                    // Для нулевой скорости оптимальная дистанция - минимальная дистанция
+                    agents[i].V = 0;
+                    agents[i].a = 0;
+                    D_opt = D_min;
+                }
+            } else {
+                console.log("----V");
+                agents[i].V = 0;
+                agents[i].a = 0;
+                continue;
+            }
+
+            let d = distance(i);
+
+            console.log(i + "= {" +  agents[i].V + " м/с, " + agents[i].a + " м/с^2, " + agents[i].x + " м, d=" + d + "}");
+
+            if (d == D_opt) {agents[i].a = 0; continue; }
+            else if (d > D_opt) {
+                if (agents[i].V < V_max) {agents[i].a = a_start; continue; } else {agents[i].a = 0; continue; }
+            } else if (d > D_min) {
+                agents[i].a = a_stop; continue;
+            } else {
+                agents[i].a = a_ex_stop; continue;
+            }
+        }
+
+        plot();
+        let t_calc = new Date().getTime() - t_start;
+        console.log("step by " + t_calc);
+    }
+
+    // Создаем нового агента со скоростью равной скорости предыдущего агента
+    function make_agent() {
+        let v = V_max;
+        if (agents.length > 0) v = agents[agents.length - 1].V;
+        agents.push({V : v, a: 0, x: 0, t: T_global, o:false});
+    }
+
+    function start() {
+        timerId = setInterval(calculate_step, dt * 1000);
+        streamID = setInterval(make_agent, 1000 * 3600 / N ); // расчитываем интервал между автомобилями в миллисекундах
+    }
+
+    function stop() {
+        clearTimeout(timerId);
+        clearTimeout(streamID);
+    }
+
+function plot() {
+    ctx.clearRect(0,0, canvas.width, 200);
+    ctx.fillStyle = "#FF0000";
+    for (let i = 0; i < agents.length; i++) {
+        ctx.fillRect(agents[i].x,50,5,2);
+    }
+}
+
+
+</script>
+
+
+</body>
+</html>

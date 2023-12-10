@@ -8,10 +8,10 @@
 <body>
 
 <table>
-	<th></th><th>Создан</th><th>Владелец</th><th>ошибка</th><th>public key</th>
-<#list model["chain"] as block>
+	<th></th><th>Создан</th><th>Владелец</th><th>ошибка</th>
+<#list chain as block>
 	<tr>
-		<td>${block?counter}</td><td>${block.ts}</td><td>${block.info}</td><td>${block.data.e}</td>
+		<td>${block?counter}</td><td>${block.ts!}</td><td>${block.autor!}</td><td>${block.e!}</td>
 	</tr>
 </#list>
 </table>

@@ -120,7 +120,7 @@ public class Main {
 
             // распечатаем параметры подвыборки
             for (int k = 0; k < 4; k++) { // цикл по стратегиям
-                System.out.println("s" + k + ": profit=" + sampling[i].profit[k] + " , dispersion=" + sampling[i].d[k] + ", environment_state=" + sampling[i].environment_state[k]);
+                System.out.println("s" + (k+1) + ": profit=" + sampling[i].profit[k] + " , dispersion=" + sampling[i].d[k] + ", environment_state=" + sampling[i].environment_state[k]);
             }
         }
     }
@@ -163,13 +163,17 @@ public class Main {
     }
 
     public void initData() {
+        /*
+            File format
+            <TICKER>;<PER>;<DATE>;<TIME>;<OPEN>;<HIGH>;<LOW>;<CLOSE>;<VOL>
+         */
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
         try {
-            List<String> pairEUR_RUB = Files.readAllLines(Paths.get("pairs/EURRUB_210801_211123.csv"));
-            List<String> pairJPY_RUB = Files.readAllLines(Paths.get("pairs/JPYRUB_210801_211123.csv"));
-            List<String> pairUSD_RUB = Files.readAllLines(Paths.get("pairs/USDRUB_210801_211123.csv"));
-            List<String> pairUZS_RUB = Files.readAllLines(Paths.get("pairs/UZSRUB_210801_211123.csv"));
+            List<String> pairEUR_RUB = Files.readAllLines(Paths.get("pairs/EURRUB_220801_221030.csv"));
+            List<String> pairJPY_RUB = Files.readAllLines(Paths.get("pairs/JPYRUB_220801_221030.csv"));
+            List<String> pairUSD_RUB = Files.readAllLines(Paths.get("pairs/USDRUB_220801_221030.csv"));
+            List<String> pairUZS_RUB = Files.readAllLines(Paths.get("pairs/UZSRUB_220801_221030.csv"));
 
             // Первая строка - заголовок
             sz = min(pairEUR_RUB.size(), pairJPY_RUB.size(), pairUSD_RUB.size(), pairUZS_RUB.size()) - 1;
@@ -185,10 +189,10 @@ public class Main {
                 String[] p_usdrub = pairUSD_RUB.get(i).replace(",", ".").split(";");
                 String[] p_uzsrub = pairUZS_RUB.get(i).replace(",", ".").split(";");
 
-                eurrub[i-1] = new CurrencyData(sdf.parse(p_eurrub[1]), Double.parseDouble(p_eurrub[2]), Double.parseDouble(p_eurrub[3]));
-                jpyrub[i-1] = new CurrencyData(sdf.parse(p_jpyrub[1]), Double.parseDouble(p_jpyrub[2]), Double.parseDouble(p_jpyrub[3]));
-                usdrub[i-1] = new CurrencyData(sdf.parse(p_usdrub[1]), Double.parseDouble(p_usdrub[2]), Double.parseDouble(p_usdrub[3]));
-                uzsrub[i-1] = new CurrencyData(sdf.parse(p_uzsrub[1]), Double.parseDouble(p_uzsrub[2]), Double.parseDouble(p_uzsrub[3]));
+                eurrub[i-1] = new CurrencyData(sdf.parse(p_eurrub[2]), Double.parseDouble(p_eurrub[4]), Double.parseDouble(p_eurrub[7]));
+                jpyrub[i-1] = new CurrencyData(sdf.parse(p_jpyrub[2]), Double.parseDouble(p_jpyrub[4]), Double.parseDouble(p_jpyrub[7]));
+                usdrub[i-1] = new CurrencyData(sdf.parse(p_usdrub[2]), Double.parseDouble(p_usdrub[4]), Double.parseDouble(p_usdrub[7]));
+                uzsrub[i-1] = new CurrencyData(sdf.parse(p_uzsrub[2]), Double.parseDouble(p_uzsrub[4]), Double.parseDouble(p_uzsrub[7]));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -205,7 +209,7 @@ public class Main {
 
 class Sample {
     // выборочная дисперсия по стратегии
-    public double[] d = new double[4];;
+    public double[] d = new double[4];
     // "выигрыш" для стратегии
     public double[] profit = new double[4];
     // индекс стратегии с максимальным риском (т.е. максимальной дисперсией)
