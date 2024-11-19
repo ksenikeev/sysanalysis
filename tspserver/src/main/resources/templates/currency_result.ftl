@@ -28,7 +28,7 @@
 
 <table>
 	<th></th><th>Создан</th><th>Владелец</th><th>Валюта 1</th><th>Валюта 2</th><th>Валюта 3</th><th>Валюта 4</th><th>Стратегия</th>
-	<th>страт. 1</th><th>страт. 2</th><th>страт. 3</th><th>страт. 4</th><th>Итог</th>
+	<th>страт. 1</th><th>страт. 2</th><th>страт. 3</th><th>страт. 4</th><th>Итог</th><th>Промежуточный результат</th>
 	<#list model["chain"] as block>
 	<tr>
 		<td>${block?counter}</td><td>${block.ts}</td><td>${block.name}</td>
@@ -42,35 +42,10 @@
 		<td>${block.strategy3}</td>
 		<td>${block.strategy4}</td>
 		<td>${block.itog}</td>
+		<td>${block.itogd?string.currency}</td>
 	</tr>
 </#list>
 </table>
 
-<h3>Блок-чейн 2</h3>
-Варианты стратегий (пропорции):
-<div>S1 - 10% : 15% : 15% : 60%</div>
-<div>S2 - 30% : 30% : 30% : 10%</div>
-<div>S3 - 60% : 10% : 10% : 20%</div>
-<div>S4 - 35% : 35% : 15% : 15%</div>
-
-<table>
-	<th></th><th>Создан</th><th>Владелец</th><th>Валюта 1</th><th>Валюта 2</th><th>Валюта 3</th><th>Валюта 4</th><th>Стратегия</th>
-	<th>страт. 1</th><th>страт. 2</th><th>страт. 3</th><th>страт. 4</th><th>Итог</th>
-	<#list model["chain2"] as block>
-	<tr>
-		<td>${block?counter}</td><td>${block.ts}</td><td>${block.name}</td>
-		<td>${block.currency1}</td>
-		<td>${block.currency2}</td>
-		<td>${block.currency3}</td>
-		<td>${block.currency4}</td>
-		<td>${block.strategy!}</td>
-		<td>${block.strategy1}</td>
-		<td>${block.strategy2}</td>
-		<td>${block.strategy3}</td>
-		<td>${block.strategy4}</td>
-		<td>${block.itog}</td>
-	</tr>
-</#list>
-</table>
 </body>
 </html>

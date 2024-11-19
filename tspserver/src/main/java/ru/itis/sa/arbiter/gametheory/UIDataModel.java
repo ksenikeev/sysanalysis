@@ -20,6 +20,7 @@ public class UIDataModel {
     private String strategy3="";
     private String strategy4="";
     private String itog="";
+    private String premium="";
     private double itogd=-1000000;
 
     public UIDataModel(CurrencyBlockModel block) {

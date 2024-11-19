@@ -22,7 +22,6 @@ public class CurrencyRestController {
     private static Logger log = Logger.getLogger(CurrencyRestController.class.getName());
     // пропорции валют в стратегиях
     private static double[][] strategy1 = new double[][]{{0.1,0.15,0.15,0.6}, {0.3,0.3,0.3,0.1},{0.6,0.1,0.1,0.2},{0.35,0.35,0.15,0.15}};
-    //private static double[][] strategy2 = new double[][]{{0.2,0.15,0.25,0.4}, {0.3,0.25,0.15,0.3},{0.5,0.15,0.25,0.1},{0.35,0.25,0.2,0.2}};
 
     @Autowired
     private HashService hashService;
@@ -94,73 +93,6 @@ public class CurrencyRestController {
         return resp;
     }
 
-    @ResponseBody
-    @GetMapping(value = "/currency/add2")
-    public CurrencyBlockResponse newBlockGetHandler2(@RequestParam(name = "value") String dataStr) {
-
-        log.info("new block2: " + dataStr);
-
-        Date ts = new Date();
-        CurrencyBlockModel block = new CurrencyBlockModel();
-
-        // Парсим присланные данные
-        ObjectMapper mapper = new ObjectMapper();
-        CurrencyDataModel data = null;
-        try {
-            data = mapper.readValue(dataStr, CurrencyDataModel.class);
-            block.setData(data);
-        } catch (JsonProcessingException e) {
-            log.log(Level.SEVERE,"error",e);
-            return new CurrencyBlockResponse(2,"mapper error: " + e.getMessage(),null);
-        }
-
-        if (block.getData().getName().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указано имя",null);
-        }
-
-        if (block.getData().getCurrency1().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код валюты 1",null);
-        }
-
-        if (block.getData().getCurrency2().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код валюты 2",null);
-        }
-
-        if (block.getData().getCurrency3().isEmpty()) {
-            return new CurrencyBlockResponse(2,"Не указан код валюты 3",null);
-        }
-
-
-        int sz = CurrencyBlockChain.chain2.size();
-
-        block.setTs( new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SX").format(ts));
-
-        if (sz > 0) {
-            try {
-                byte[] hash = hashService.getHash(CurrencyBlockChain.chain2.get(sz - 1));
-                block.setPrevhash(new String(Hex.encode(hash)));
-            } catch (Exception e1) {
-                log.log(Level.SEVERE, "error " + "(" + block.getInfo() + ")", e1);
-                return new CurrencyBlockResponse(2, "Ошибка формирования хеша: " + e1.getMessage(), null);
-            }
-
-/*
-            for (CurrencyBlockModel bm : CurrencyBlockChain.chain2) {
-                if (checkEquals(bm, block)) {
-                    return new CurrencyBlockResponse(2, "Такой набор валют уже загружался", null);
-                }
-            }
-*/
-        }
-
-        CurrencyBlockChain.chain2.add(block);
-        CurrencyBlockChain.saveBlockChain();
-        log.info("block " + block.getInfo() + " added ");
-        CurrencyBlockResponse resp =  new CurrencyBlockResponse(0,"",block);
-
-        return resp;
-    }
-
     /**
      * Запрос цепочки блоков
      */
@@ -172,16 +104,6 @@ public class CurrencyRestController {
     }
 
     /**
-     * Запрос цепочки блоков
-     */
-    @GetMapping(value = "/currency/bc2")
-    public String getBc2(@RequestParam(name = "hash", required = false) String prevHash,
-                        @ModelAttribute("model") ModelMap model) {
-        model.addAttribute("chain", CurrencyBlockChain.chain2);
-        return "authors";
-    }
-
-    /**
      * Запрос данных блоков
      */
     @GetMapping(value = "/currency/alldata")
@@ -189,7 +111,6 @@ public class CurrencyRestController {
                              @ModelAttribute("model") ModelMap model) {
 
         model.addAttribute("chain", handler.getUIDataModelList(CurrencyBlockChain.chain, strategy1));
-        model.addAttribute("chain2", handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy1));
 
         return "currency_result";
     }
@@ -199,9 +120,7 @@ public class CurrencyRestController {
                              @ModelAttribute("model") ModelMap model) {
 
         List<UIDataModel>  c1 = handler.getUIDataModelList(CurrencyBlockChain.chain, strategy1);
-        List<UIDataModel>  c2 = handler.getUIDataModelList(CurrencyBlockChain.chain2, strategy1);
 
-        c1.addAll(c2);
         c1.sort((o1, o2) -> o1.getItogd() < o2.getItogd() ? 1 : -1);
 
         model.addAttribute("chain", c1);

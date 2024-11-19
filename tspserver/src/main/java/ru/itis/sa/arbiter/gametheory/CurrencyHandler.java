@@ -11,7 +11,6 @@ public class CurrencyHandler {
                                                       "HUF","TRY", "INR", "IDR"};
     // пропорции валют в стратегиях
     double[][] strategy1 = new double[][]{{0.1,0.15,0.15,0.6}, {0.3,0.3,0.3,0.1},{0.6,0.1,0.1,0.2},{0.35,0.35,0.15,0.15}};
-    double[][] strategy2 = new double[][]{{0.2,0.15,0.25,0.4}, {0.3,0.25,0.15,0.3},{0.5,0.15,0.25,0.1},{0.35,0.25,0.2,0.2}};
     static double budget  = 1000000;
     public static Map<String, Double[][]> currecnyData = new HashMap<>();
 
@@ -23,13 +22,12 @@ public class CurrencyHandler {
         System.out.println("read data");
         for (String cur : currency) {
             try {
-                List<String> pair = Files.readAllLines(Paths.get("itog_pair/" + cur + "RUB_220701_221113.csv"));
-
+                List<String> pair = Files.readAllLines(Paths.get("itog_pair/" + cur + "RUB_04122023_08122023.csv"));
                 Double[][] m = new Double[5][2];
-                for (int i = 111; i < 116; i++) {
-                    String[] sc = pair.get(i).split(";");
-                    m[i - 111][0] = Double.parseDouble(sc[4]);
-                    m[i - 111][1] = Double.parseDouble(sc[7]);
+                for (int i = 0; i < 5; i++) {
+                    String[] sc = pair.get(i + 1).split(";");
+                    m[i][0] = Double.parseDouble(sc[4]);
+                    m[i][1] = Double.parseDouble(sc[7]);
                 }
                 currecnyData.put(cur, m);
             } catch (IOException e) {
@@ -116,7 +114,16 @@ public class CurrencyHandler {
             dm.setStrategy4(String.format("<span class='%s %s'>%.2f</span>",riskStrategy==4 ? "strisk":"stnorm",selectedStrategy==4 ? "stsel":"",profit[3]));
 
             if (selectedStrategy > 0 && selectedStrategy < 5) {
-                dm.setItog(String.format("<span class='%s'>%.2f</span>", riskStrategy == selectedStrategy ? "strisk" : "stnorm", profit[selectedStrategy - 1]));
+
+                double itog = profit[selectedStrategy - 1];
+                if (itog > 0) { itog += 50000; dm.setPremium("50000");}
+                else if (itog < 0) {itog -=30000; dm.setPremium("-30000");}
+                if (riskStrategy == selectedStrategy && itog > 0) itog *= 0.3;
+
+                dm.setItog(
+                        String.format("<span class='%s'>%.2f</span>",
+                                riskStrategy == selectedStrategy ? "strisk" : "stnorm", itog));
+
                 dm.setItogd(profit[selectedStrategy - 1]);
             }
         }
