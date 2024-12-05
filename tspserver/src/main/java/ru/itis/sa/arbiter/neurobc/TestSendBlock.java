@@ -42,7 +42,7 @@ public class TestSendBlock {
             String sign = new String(Hex.encode(signature.sign()));
 
             BlockModel block = new BlockModel();
-            block.setPrevhash("000878fbdae97803cec0b4e9eef1b1d66f33e23d21ddfcf13a3a310da61d07bc");
+            block.setPrevhash("7baac47e2b78d2afa89a60608df00ccd55f9747740aa9bba805addfaaf520bc5");
             block.setData(dm);
             block.setSignature(sign);
             block.setNonce(0);
