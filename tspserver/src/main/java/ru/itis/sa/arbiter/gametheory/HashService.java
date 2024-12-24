@@ -20,6 +20,17 @@ public class HashService {
         return result;
     }
 
+    public byte[] getHash(StockBlockModel block) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+        MessageDigest digest = MessageDigest.getInstance(DIGEST_ALGORITHM);
+
+        byte[] result = digest.digest(
+                concat(concat(block.getPrevhash() != null? block.getPrevhash().getBytes() : null,
+                                block.getData().toString().getBytes("UTF-8")),
+                        block.getTs().getBytes()));
+        return result;
+    }
+
     public static byte[] concat(byte[] a, byte[] b) {
         if (a == null) return b;
         if (b == null) return a;
